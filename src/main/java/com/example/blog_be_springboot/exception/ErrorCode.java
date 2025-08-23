@@ -24,7 +24,7 @@ public enum ErrorCode {
 
     // 409
     CONFLICT(HttpStatus.CONFLICT,              "BLG-COM-CONFLICT",             "Xung đột dữ liệu."),
-    EMAIL_ALREADY_USED(HttpStatus.CONFLICT,    "BLG-USER-EMAIL_CONFLICT",      "Email đã được sử dụng."),
+    USERNAME_ALREADY_USED(HttpStatus.CONFLICT,    "BLG-USER-EMAIL_CONFLICT",      "Username đã được sử dụng."),
     POST_SLUG_EXISTS(HttpStatus.CONFLICT,      "BLG-POST-SLUG_CONFLICT",       "Slug bài viết đã tồn tại."),
     INVALID_STATE(HttpStatus.CONFLICT,         "BLG-COM-INVALID_STATE",        "Trạng thái hiện tại không cho phép thao tác."),
 
