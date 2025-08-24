@@ -20,10 +20,10 @@ import java.util.Set;
 @Table(name = "comments")
 public class Comment {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob // Dùng cho các trường văn bản dài
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(nullable = false, updatable = false)

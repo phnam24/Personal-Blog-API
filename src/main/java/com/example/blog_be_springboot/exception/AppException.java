@@ -1,5 +1,8 @@
 package com.example.blog_be_springboot.exception;
 
+import lombok.Getter;
+
+@Getter
 public class AppException extends RuntimeException {
     private final ErrorCode errorCode;
 
@@ -13,7 +16,4 @@ public class AppException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    public ErrorCode getErrorCode() {
-        return errorCode;
-    }
 }

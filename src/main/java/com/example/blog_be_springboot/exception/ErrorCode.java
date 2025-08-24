@@ -12,7 +12,7 @@ public enum ErrorCode {
 
     // 401/403
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED,      "BLG-AUTH-UNAUTHORIZED",        "Chưa đăng nhập hoặc token không hợp lệ."),
-    BAD_CREDENTIALS(HttpStatus.UNAUTHORIZED,   "BLG-AUTH-BAD_CREDENTIALS",     "Email hoặc mật khẩu không đúng."),
+    BAD_CREDENTIALS(HttpStatus.UNAUTHORIZED,   "BLG-AUTH-BAD_CREDENTIALS",     "Username hoặc mật khẩu không đúng."),
     FORBIDDEN(HttpStatus.FORBIDDEN,            "BLG-AUTH-FORBIDDEN",           "Không có quyền thực hiện thao tác."),
     NOT_OWNER(HttpStatus.FORBIDDEN,            "BLG-POST-NOT_OWNER",           "Bạn không phải tác giả của tài nguyên."),
 
@@ -24,7 +24,8 @@ public enum ErrorCode {
 
     // 409
     CONFLICT(HttpStatus.CONFLICT,              "BLG-COM-CONFLICT",             "Xung đột dữ liệu."),
-    USERNAME_ALREADY_USED(HttpStatus.CONFLICT,    "BLG-USER-EMAIL_CONFLICT",      "Username đã được sử dụng."),
+    USERNAME_ALREADY_USED(HttpStatus.CONFLICT,    "BLG-USER-NAME_CONFLICT",      "Username đã được sử dụng."),
+    EMAIL_ALREADY_USED(HttpStatus.CONFLICT,    "BLG-USER-EMAIL_CONFLICT",      "Email đã được sử dụng."),
     POST_SLUG_EXISTS(HttpStatus.CONFLICT,      "BLG-POST-SLUG_CONFLICT",       "Slug bài viết đã tồn tại."),
     INVALID_STATE(HttpStatus.CONFLICT,         "BLG-COM-INVALID_STATE",        "Trạng thái hiện tại không cho phép thao tác."),
 

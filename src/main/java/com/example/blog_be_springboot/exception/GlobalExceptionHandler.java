@@ -62,8 +62,8 @@ public class GlobalExceptionHandler {
     public ProblemDetail onConflict(DataIntegrityViolationException ex) {
         ex.getMostSpecificCause();
         String msg = ex.getMostSpecificCause().getMessage();
-        if (msg.contains("users") && msg.contains("email")) {
-            return ErrorCode.EMAIL_ALREADY_USED.toProblemDetail();
+        if (msg.contains("users") && msg.contains("username")) {
+            return ErrorCode.USERNAME_ALREADY_USED.toProblemDetail();
         }
         if (msg.contains("posts") && msg.contains("slug")) {
             return ErrorCode.POST_SLUG_EXISTS.toProblemDetail();
@@ -92,5 +92,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ProblemDetail onUnknown(Exception ex) {
         return ErrorCode.INTERNAL_ERROR.toProblemDetail();
+    }
+
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ProblemDetail onJwt(JwtAuthenticationException ex) {
+        return ex.getErrorCode().toProblemDetail(ex.getMessage(), null);
     }
 }
