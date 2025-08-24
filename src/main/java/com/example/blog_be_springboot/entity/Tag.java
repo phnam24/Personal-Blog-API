@@ -1,27 +1,26 @@
 package com.example.blog_be_springboot.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Table(name = "tags")
+@Getter @Setter
+@AllArgsConstructor @NoArgsConstructor
+@Table(name = "tags",
+        uniqueConstraints = @UniqueConstraint(name = "uk_tags_name", columnNames = "name"))
 public class Tag {
+
     @Id
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(length = 50, nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
-    @JsonIgnore
+    // N-N với Post qua bảng post_tags
+    @ManyToMany(mappedBy = "tags")
     private Set<Post> posts = new HashSet<>();
 }
