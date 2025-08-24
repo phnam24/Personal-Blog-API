@@ -1,6 +1,10 @@
 // src/main/java/com/example/blog_be_springboot/sercurity/JwtAuthenticationFilter.java
 package com.example.blog_be_springboot.sercurity;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.example.blog_be_springboot.exception.ErrorCode;
+import com.example.blog_be_springboot.exception.JwtAuthenticationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,23 +14,47 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String AUTHZ = "Authorization";
     private static final String BEARER = "Bearer ";
+    private static final AntPathMatcher PATH = new AntPathMatcher();
 
     private final JwtService jwtService;
 
+    // whitelist endpoint public
+    private final Set<String> whitelist = Set.of(
+            "/auth/login",
+            "/auth/register",
+            "/swagger-ui", "/swagger-ui/",
+            "/v3/api-docs", "/v3/api-docs/",
+            "/public"
+    );
+
     public JwtAuthenticationFilter(JwtService jwtService) {
         this.jwtService = jwtService;
+    }
+
+    /** BỎ QUA filter cho các path công khai hoặc preflight CORS */
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) return true; // CORS preflight
+        String path = request.getServletPath(); // không gồm context-path
+        for (String pattern : whitelist) {
+            if (PATH.match(pattern, path)) return true;
+        }
+        return false;
     }
 
     @Override
@@ -36,19 +64,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         String header = request.getHeader(AUTHZ);
-
-        // Không có Authorization -> bỏ qua
         if (header == null || !header.startsWith(BEARER)) {
-            filterChain.doFilter(request, response);
-            return;
+            // Thiếu/malformed header → ném AuthenticationException
+            throw new JwtAuthenticationException(
+                    ErrorCode.BAD_CREDENTIALS, "Missing or malformed Authorization header");
         }
 
         String token = header.substring(BEARER.length()).trim();
 
-        // Token không hợp lệ -> bỏ qua (để EntryPoint xử lý 401 khi cần)
-        if (!jwtService.validateToken(token)) {
-            filterChain.doFilter(request, response);
-            return;
+        // Xác thực token & phân biệt lỗi
+        try {
+            jwtService.assertValid(token); // sẽ ném nếu invalid/expired
+        } catch (TokenExpiredException e) {
+            throw new JwtAuthenticationException(ErrorCode.BAD_CREDENTIALS, "Token expired");
+        } catch (JWTVerificationException e) {
+            throw new JwtAuthenticationException(ErrorCode.BAD_CREDENTIALS, "Invalid token");
         }
 
         // Lấy username + role từ token

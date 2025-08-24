@@ -55,6 +55,10 @@ public class JwtService {
         }
     }
 
+    public void assertValid(String token) throws JWTVerificationException {
+        verifier.verify(token); // sẽ ném TokenExpiredException / JWTVerificationException ...
+    }
+
     public String getUsername(String token) {
         try {
             return decode(token).getSubject();
