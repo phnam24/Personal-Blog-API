@@ -29,13 +29,13 @@ public class AuthController {
         return ApiResponse.of(authService.register(registerRequest), "Create Account Success");
     }
 
-    @PutMapping("/pw-admin/{id}")
+    @PatchMapping("/pw-admin/{id}")
     public ApiResponse<String> pwAdmin(@PathVariable Long id, @RequestBody Map<String, String> body) {
         authService.changePassword(id, body.get("password"));
         return ApiResponse.of("Success");
     }
 
-    @PutMapping("/change-password/{userId}")
+    @PatchMapping("/change-password/{userId}")
     public ApiResponse<UserDetailsResponse> changePassword(@PathVariable Long userId, @RequestBody Map<String, String> body) {
 
         return ApiResponse.of(authService.changePassword(userId, body.get("oldPassword"), body.get("newPassword"))

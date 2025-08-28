@@ -40,7 +40,7 @@ public class TagController {
         return ApiResponse.of(tagService.createTag(tagCreateRequest), "Tag created");
     }
 
-    @PutMapping("/update/{id}")
+    @PatchMapping("/update/{id}")
     public ApiResponse<TagResponse> updateTag(@RequestBody TagCreateUpdateRequest tagCreateRequest, @PathVariable Long id) {
         return ApiResponse.of(tagService.updateTag(id, tagCreateRequest), "Tag updated");
     }

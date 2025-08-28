@@ -35,7 +35,7 @@ public class UserController {
         return ApiResponse.of(userService.getUserById(userId));
     }
 
-    @PutMapping("/update/{userId}")
+    @PatchMapping("/update/{userId}")
     public ApiResponse<UserDetailsResponse> updateUser(
             @PathVariable Long userId,
             @RequestBody UserUpdateRequest userUpdateRequest
