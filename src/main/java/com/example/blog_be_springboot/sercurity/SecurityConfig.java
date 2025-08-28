@@ -31,10 +31,13 @@ public class SecurityConfig {
                         org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/**",        // login/register
-                                "/swagger-ui/**",  // api docs
-                                "/v3/api-docs/**",
-                                "/public/**"       // public resources
+                                "/auth/login",
+                                "/auth/register",
+                                "/swagger-ui", "/swagger-ui/",
+                                "/v3/api-docs", "/v3/api-docs/",
+                                "/tags",
+                                "/tags/search",
+                                "/posts/"      // public resources
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
