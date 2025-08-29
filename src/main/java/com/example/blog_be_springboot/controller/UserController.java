@@ -30,6 +30,15 @@ public class UserController {
         return userService.getAllUsers(page, size);
     }
 
+    @GetMapping("/search")
+    public ApiResponse<List<UserDetailsResponse>> searchUsers(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return userService.searchUsers(name, page, size);
+    }
+
     @GetMapping("/{userId}")
     public ApiResponse<UserDetailsResponse> getUserById(@PathVariable Long userId){
         return ApiResponse.of(userService.getUserById(userId));

@@ -9,6 +9,7 @@ import com.example.blog_be_springboot.exception.ErrorCode;
 import com.example.blog_be_springboot.mapper.UserMapper;
 import com.example.blog_be_springboot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -48,6 +50,16 @@ public class UserService {
         Page<User> result = userRepository.findAll(pageable);
 
         return userMapper.toPagedResponse(result); // dùng helper mapper bạn đã có
+    }
+
+    public ApiResponse<List<UserDetailsResponse>> searchUsers(String keyword, int page, int size) {
+        int p = Math.max(page, 0);
+        int s = Math.min(Math.max(size, 1), 100);
+
+        Pageable pageable = PageRequest.of(p, s, Sort.by(Sort.Direction.DESC, "id"));
+        Page<User> result = userRepository.findAll(pageable);
+
+        return userMapper.toPagedResponse(result);
     }
 
     @PreAuthorize("@userAccess.canView(#userId, authentication)")
