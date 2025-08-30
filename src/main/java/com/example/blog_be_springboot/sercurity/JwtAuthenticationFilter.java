@@ -40,8 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/swagger-ui", "/swagger-ui/",
             "/v3/api-docs", "/v3/api-docs/",
             "/tags",
-            "/tags/search",
-            "/posts/"
+            "/tags/search"
     );
 
     public JwtAuthenticationFilter(JwtService jwtService) {
@@ -53,6 +52,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) return true; // CORS preflight
         String path = request.getServletPath(); // không gồm context-path
+        String method = request.getMethod();
+
+        // Public GET
+        if ("GET".equalsIgnoreCase(method) &&
+                (PATH.match("/posts", path) || PATH.match("/posts/*", path))) {
+            return true;
+        }
+
         for (String pattern : whitelist) {
             if (PATH.match(pattern, path)) return true;
         }
@@ -86,16 +93,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Lấy username + role từ token
         String username = jwtService.getUsername(token);
         String role = jwtService.getRole(token); // kỳ vọng trả về "ADMIN", "USER", ...
+        Long userId = jwtService.getUserId(token);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // Map sang authority "ROLE_..."
             String authority = (role != null && !role.isBlank())
                     ? (role.startsWith("ROLE_") ? role : "ROLE_" + role)
                     : null;
-
+            var principal = new UserPrincipal(userId, username);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            username,
+                            principal,
                             null,
                             authority == null ? List.of() : List.of(new SimpleGrantedAuthority(authority))
                     );

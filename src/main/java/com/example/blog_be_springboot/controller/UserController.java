@@ -44,7 +44,7 @@ public class UserController {
         return ApiResponse.of(userService.getUserById(userId));
     }
 
-    @PatchMapping("/update/{userId}")
+    @PatchMapping("/{userId}")
     public ApiResponse<UserDetailsResponse> updateUser(
             @PathVariable Long userId,
             @RequestBody UserUpdateRequest userUpdateRequest
@@ -53,7 +53,7 @@ public class UserController {
         ,"Update Account Success");
     }
 
-    @DeleteMapping("/delete/{userId}")
+    @DeleteMapping("/{userId}")
     public ApiResponse<UserDetailsResponse> deleteUser(@PathVariable Long userId){
         return ApiResponse.of(userService.deleteUser(userId), "Delete Account Success");
     }

@@ -37,7 +37,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             msg  = jae.getMessage();
         }
 
-        ProblemDetail body = code.toProblemDetail(msg, null);
+        ProblemDetail body = code.toProblemDetail("Token không hợp lệ!", null);
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());

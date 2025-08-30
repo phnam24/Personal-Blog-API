@@ -35,17 +35,17 @@ public class TagController {
         return tagService.searchTagsByName(keyword, page, size);
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ApiResponse<TagResponse> createTag(@RequestBody TagCreateUpdateRequest tagCreateRequest) {
         return ApiResponse.of(tagService.createTag(tagCreateRequest), "Tag created");
     }
 
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/{id}")
     public ApiResponse<TagResponse> updateTag(@RequestBody TagCreateUpdateRequest tagCreateRequest, @PathVariable Long id) {
         return ApiResponse.of(tagService.updateTag(id, tagCreateRequest), "Tag updated");
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ApiResponse<String> deleteTag(@PathVariable Long id) {
         tagService.deleteTag(id);
         return ApiResponse.of("Deleted Tag");

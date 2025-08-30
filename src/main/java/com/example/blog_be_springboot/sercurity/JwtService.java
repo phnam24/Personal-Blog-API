@@ -29,7 +29,7 @@ public class JwtService {
         this.verifier = JWT.require(algorithm).withIssuer(issuer).build();
     }
 
-    public String generateToken(String username, Role roles) {
+    public String generateToken(Long userId, String username, Role roles) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiryMinutes * 60_000L);
 
@@ -39,6 +39,7 @@ public class JwtService {
                 .withIssuedAt(now)
                 .withExpiresAt(expiryDate)
                 .withClaim("role", roles.name())
+                .withClaim("user_id", userId)
                 .sign(algorithm);
     }
 
@@ -57,6 +58,14 @@ public class JwtService {
 
     public void assertValid(String token) throws JWTVerificationException {
         verifier.verify(token); // sẽ ném TokenExpiredException / JWTVerificationException ...
+    }
+
+    public Long getUserId(String token) {
+        try {
+            return decode(token).getClaim("user_id").asLong();
+        } catch (JWTVerificationException e) {
+            return null;
+        }
     }
 
     public String getUsername(String token) {

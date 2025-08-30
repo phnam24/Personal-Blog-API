@@ -2,10 +2,12 @@ package com.example.blog_be_springboot.mapper;
 
 import com.example.blog_be_springboot.dto.response.ApiResponse;
 import com.example.blog_be_springboot.dto.response.UserDetailsResponse;
+import com.example.blog_be_springboot.dto.response.UserSimpleResponse;
 import com.example.blog_be_springboot.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 import org.springframework.data.domain.Page;
 
 import java.time.Instant;
@@ -13,8 +15,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
-@Mapper
+@Mapper( componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
+    UserSimpleResponse userToUserSimpleResponse(User user);
+
     @Mapping(source = "createdAt", target = "creationDate", qualifiedByName = "instantToLocalDate")
     UserDetailsResponse toDetailsDto(User user);
 

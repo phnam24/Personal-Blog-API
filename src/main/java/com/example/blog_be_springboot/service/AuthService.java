@@ -40,10 +40,13 @@ public class AuthService {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
         User user = userRepository.findByUsername(username);
+
         System.out.println(username + " " + password);
         if (user == null) {
             throw new AppException(ErrorCode.USER_NOT_FOUND);
         }
+
+        Long userId = user.getId();
 
         boolean authenticated = passwordEncoder.matches(password, user.getPassword());
 
@@ -51,7 +54,7 @@ public class AuthService {
             throw new AppException(ErrorCode.BAD_CREDENTIALS);
         }
 
-        String token = jwtService.generateToken(username, user.getRole());
+        String token = jwtService.generateToken(userId, username, user.getRole());
         return new LoginResponse(token);
     }
 
