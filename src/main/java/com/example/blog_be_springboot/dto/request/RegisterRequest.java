@@ -1,7 +1,6 @@
-package com.example.blog_be_springboot.dto.resquest;
+package com.example.blog_be_springboot.dto.request;
 
 import com.example.blog_be_springboot.entity.Role;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

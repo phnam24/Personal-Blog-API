@@ -2,7 +2,7 @@ package com.example.blog_be_springboot.service;
 
 import com.example.blog_be_springboot.dto.response.ApiResponse;
 import com.example.blog_be_springboot.dto.response.TagResponse;
-import com.example.blog_be_springboot.dto.resquest.TagCreateUpdateRequest;
+import com.example.blog_be_springboot.dto.request.TagCreateUpdateRequest;
 import com.example.blog_be_springboot.entity.Tag;
 import com.example.blog_be_springboot.exception.AppException;
 import com.example.blog_be_springboot.exception.ErrorCode;

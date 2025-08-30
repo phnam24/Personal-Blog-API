@@ -2,11 +2,10 @@ package com.example.blog_be_springboot.controller;
 
 import com.example.blog_be_springboot.dto.response.ApiResponse;
 import com.example.blog_be_springboot.dto.response.TagResponse;
-import com.example.blog_be_springboot.dto.resquest.TagCreateUpdateRequest;
+import com.example.blog_be_springboot.dto.request.TagCreateUpdateRequest;
 import com.example.blog_be_springboot.service.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

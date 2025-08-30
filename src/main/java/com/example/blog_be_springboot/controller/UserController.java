@@ -2,7 +2,7 @@ package com.example.blog_be_springboot.controller;
 
 import com.example.blog_be_springboot.dto.response.ApiResponse;
 import com.example.blog_be_springboot.dto.response.UserDetailsResponse;
-import com.example.blog_be_springboot.dto.resquest.UserUpdateRequest;
+import com.example.blog_be_springboot.dto.request.UserUpdateRequest;
 import com.example.blog_be_springboot.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

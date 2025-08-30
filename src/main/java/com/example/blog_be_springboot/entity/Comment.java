@@ -45,4 +45,7 @@ public class Comment {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<Comment> children = new HashSet<>();
+
+    @PrePersist
+    void prePersist() { if (createdAt == null) createdAt = Instant.now(); }
 }

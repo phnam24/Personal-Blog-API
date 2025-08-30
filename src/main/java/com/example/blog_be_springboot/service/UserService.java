@@ -2,7 +2,7 @@ package com.example.blog_be_springboot.service;
 
 import com.example.blog_be_springboot.dto.response.ApiResponse;
 import com.example.blog_be_springboot.dto.response.UserDetailsResponse;
-import com.example.blog_be_springboot.dto.resquest.UserUpdateRequest;
+import com.example.blog_be_springboot.dto.request.UserUpdateRequest;
 import com.example.blog_be_springboot.entity.User;
 import com.example.blog_be_springboot.exception.AppException;
 import com.example.blog_be_springboot.exception.ErrorCode;

@@ -1,4 +1,4 @@
-package com.example.blog_be_springboot.dto.resquest;
+package com.example.blog_be_springboot.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 

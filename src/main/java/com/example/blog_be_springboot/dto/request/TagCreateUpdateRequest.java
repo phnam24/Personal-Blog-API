@@ -1,4 +1,4 @@
-package com.example.blog_be_springboot.dto.resquest;
+package com.example.blog_be_springboot.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -2,8 +2,8 @@ package com.example.blog_be_springboot.service;
 
 import com.example.blog_be_springboot.dto.response.LoginResponse;
 import com.example.blog_be_springboot.dto.response.UserDetailsResponse;
-import com.example.blog_be_springboot.dto.resquest.LoginRequest;
-import com.example.blog_be_springboot.dto.resquest.RegisterRequest;
+import com.example.blog_be_springboot.dto.request.LoginRequest;
+import com.example.blog_be_springboot.dto.request.RegisterRequest;
 import com.example.blog_be_springboot.entity.Role;
 import com.example.blog_be_springboot.entity.User;
 import com.example.blog_be_springboot.exception.AppException;
