@@ -22,7 +22,7 @@ public class PostController {
     @GetMapping
     public ApiResponse<List<PostSummaryResponse>> getAllPostsSummary(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "100") int size
+            @RequestParam(defaultValue = "10") int size
     ) {
         return postService.getAllPostsSummary(page, size);
     }

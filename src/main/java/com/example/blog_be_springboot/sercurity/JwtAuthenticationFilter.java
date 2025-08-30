@@ -56,7 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Public GET
         if ("GET".equalsIgnoreCase(method) &&
-                (PATH.match("/posts", path) || PATH.match("/posts/*", path))) {
+                (PATH.match("/posts", path) || PATH.match("/posts/**", path) || PATH.match("/comments/*", path))) {
             return true;
         }
 

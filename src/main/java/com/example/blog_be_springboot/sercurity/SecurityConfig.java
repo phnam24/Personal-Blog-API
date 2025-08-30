@@ -40,7 +40,7 @@ public class SecurityConfig {
                                 "/tags",
                                 "/tags/search"// public resources
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET,"/posts", "/posts/*").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/posts", "/posts/**", "/comments/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
