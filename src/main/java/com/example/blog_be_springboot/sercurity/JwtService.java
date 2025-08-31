@@ -10,46 +10,60 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class JwtService {
-    private final Algorithm algorithm;
-    private final JWTVerifier verifier;
+    private final Algorithm accessAlg;
+    private final JWTVerifier accessVerifier;
     private final String issuer;
-    private final long expiryMinutes;
+    private final long accessExpMinutes;
+
+    // refresh
+    private final Algorithm refreshAlg;
+    private final JWTVerifier refreshVerifier;
+    private final long refreshExpMinutes;
 
     public JwtService(
-            @Value("${app.jwt.secret}") String secret,
+            @Value("${app.jwt.secret}") String accessSecret,
+            @Value("${app.jwt.refresh-secret:change-me-refresh-secret}") String refreshSecret,
             @Value("${app.jwt.issuer:blog-app}") String issuer,
-            @Value("${app.jwt.exp-minutes:60}") long expiryMinutes
+            @Value("${app.jwt.exp-minutes:15}") long accessExpMinutes,
+            @Value("${app.jwt.refresh-exp-minutes:43200}") long refreshExpMinutes // 30 ngày
     ) {
-        this.algorithm = Algorithm.HMAC256(secret);
+        this.accessAlg = Algorithm.HMAC256(accessSecret);
+        this.refreshAlg = Algorithm.HMAC256(refreshSecret);
         this.issuer = issuer;
-        this.expiryMinutes = expiryMinutes;
-        this.verifier = JWT.require(algorithm).withIssuer(issuer).build();
+        this.accessExpMinutes = accessExpMinutes;
+        this.refreshExpMinutes = refreshExpMinutes;
+
+        this.accessVerifier = JWT.require(accessAlg).withIssuer(issuer).build();
+        this.refreshVerifier = JWT.require(refreshAlg).withIssuer(issuer).build();
     }
 
-    public String generateToken(Long userId, String username, Role roles) {
+    // ===== Access Token =====
+    public String generateAccessToken(Long userId, String username, Role role) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expiryMinutes * 60_000L);
-
+        Date exp = new Date(now.getTime() + accessExpMinutes * 60_000L);
         return JWT.create()
                 .withIssuer(issuer)
                 .withSubject(username)
+                .withClaim("role", role.name())
                 .withIssuedAt(now)
-                .withExpiresAt(expiryDate)
-                .withClaim("role", roles.name())
+                .withExpiresAt(exp)
+                .withJWTId(UUID.randomUUID().toString()) // jti (tiện blacklist)
+                .withClaim("typ", "access")
                 .withClaim("user_id", userId)
-                .sign(algorithm);
+                .sign(accessAlg);
     }
 
-    private DecodedJWT decode(String token) throws JWTVerificationException {
-        return verifier.verify(token);
+    public DecodedJWT decodeAccess(String token) {
+        return accessVerifier.verify(token);
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateAccessToken(String token) {
         try {
-            verifier.verify(token);
+            accessVerifier.verify(token);
             return true;
         } catch (JWTVerificationException ex) {
             return false;
@@ -57,12 +71,12 @@ public class JwtService {
     }
 
     public void assertValid(String token) throws JWTVerificationException {
-        verifier.verify(token); // sẽ ném TokenExpiredException / JWTVerificationException ...
+        accessVerifier.verify(token); // sẽ ném TokenExpiredException / JWTVerificationException ...
     }
 
     public Long getUserId(String token) {
         try {
-            return decode(token).getClaim("user_id").asLong();
+            return decodeAccess(token).getClaim("user_id").asLong();
         } catch (JWTVerificationException e) {
             return null;
         }
@@ -70,7 +84,7 @@ public class JwtService {
 
     public String getUsername(String token) {
         try {
-            return decode(token).getSubject();
+            return decodeAccess(token).getSubject();
         } catch (JWTVerificationException e) {
             return null;
         }
@@ -78,7 +92,7 @@ public class JwtService {
 
     public String getRole(String token) {
         try {
-            DecodedJWT jwt = decode(token);
+            DecodedJWT jwt = decodeAccess(token);
             return jwt.getClaim("role").asString();
         } catch (JWTVerificationException e) {
             return "";
@@ -87,9 +101,27 @@ public class JwtService {
 
     public Date getExpiry(String token) {
         try {
-            return decode(token).getExpiresAt();
+            return decodeAccess(token).getExpiresAt();
         } catch (JWTVerificationException e) {
             return null;
         }
+    }
+
+    public String generateRefreshToken(Long userId, String username, UUID jti) {
+        Date now = new Date();
+        Date exp = new Date(now.getTime() + refreshExpMinutes * 60_000L);
+        return JWT.create()
+                .withIssuer(issuer)
+                .withSubject(username)
+                .withIssuedAt(now)
+                .withExpiresAt(exp)
+                .withJWTId(jti.toString())   // <- quan trọng
+                .withClaim("typ", "refresh")
+                .withClaim("user_id", userId)// đánh dấu loại token
+                .sign(refreshAlg);
+    }
+
+    public DecodedJWT decodeRefresh(String refreshJwt) {
+        return refreshVerifier.verify(refreshJwt);
     }
 }

@@ -1,13 +1,14 @@
 package com.example.blog_be_springboot.controller;
 
 import com.example.blog_be_springboot.dto.response.ApiResponse;
-import com.example.blog_be_springboot.dto.response.LoginResponse;
+import com.example.blog_be_springboot.dto.response.AuthTokensResponse;
 import com.example.blog_be_springboot.dto.response.UserDetailsResponse;
 import com.example.blog_be_springboot.dto.request.LoginRequest;
 import com.example.blog_be_springboot.dto.request.RegisterRequest;
 import com.example.blog_be_springboot.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -20,8 +21,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ApiResponse<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        return ApiResponse.of(authService.login(loginRequest), "Login Success");
+    public ApiResponse<AuthTokensResponse> login(@RequestBody LoginRequest loginRequest) {
+        return ApiResponse.of(authService.issueTokens(loginRequest), "Login Success");
     }
 
     @PostMapping("/register")
@@ -40,5 +41,28 @@ public class AuthController {
 
         return ApiResponse.of(authService.changePassword(userId, body.get("oldPassword"), body.get("newPassword"))
                 ,"Change Password Success");
+    }
+
+    // ==== Refresh ====
+    public record RefreshRequest(String refreshToken) {}
+
+    @PostMapping("/refresh")
+    public ApiResponse<AuthTokensResponse> refresh(@RequestBody RefreshRequest body) {
+        var tokens = authService.rotate(body.refreshToken());
+        return ApiResponse.of(tokens);
+    }
+
+    // ==== Logout 1 phiên ====
+    @PostMapping("/logout")
+    public ApiResponse<String> logout(@RequestBody RefreshRequest body) {
+        authService.logout(body.refreshToken());
+        return ApiResponse.of("Logout Success");
+    }
+
+    // ==== Logout all ====
+    @PostMapping("/logout-all")
+    public ApiResponse<String> logoutAll(@RequestParam("userId") Long userId) {
+        authService.revokeAll(userId);
+        return ApiResponse.of("Logout Success");
     }
 }

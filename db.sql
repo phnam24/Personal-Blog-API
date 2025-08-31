@@ -90,3 +90,40 @@ INSERT INTO comments (content, post_id, user_id, parent_id) VALUES
                                                                 ('Cảm ơn góp ý của bạn, mình sẽ cập nhật lại cho rõ hơn.', 2, 1, 4),
                                                                 ('Mình cũng thấy vậy, mong chờ bản cập nhật.', 2, 3, 5),
                                                                 ('Tuyệt vời, đúng thứ mình đang tìm kiếm!', 3, 1, NULL);
+
+DROP TABLE IF EXISTS refresh_tokens;
+
+CREATE TABLE refresh_tokens (
+    -- jti của refresh JWT, lưu ở dạng BINARY(16) cho gọn & index tốt
+                                id            BINARY(16)           NOT NULL,
+                                user_id       BIGINT UNSIGNED      NOT NULL,
+                                expires_at    DATETIME(3)          NOT NULL,                 -- hạn refresh token
+                                revoked       TINYINT(1)           NOT NULL DEFAULT 0,       -- 0/1
+                                replaced_by   BINARY(16)           NULL,                     -- jti mới khi rotate
+                                user_agent    VARCHAR(255)         NULL,
+                                ip            VARCHAR(64)          NULL,
+
+                                created_at    TIMESTAMP            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                last_used_at  TIMESTAMP            NULL     DEFAULT NULL,
+
+                                PRIMARY KEY (id),
+
+    -- Index phục vụ tra cứu nhanh
+                                KEY idx_refresh_user          (user_id),
+                                KEY idx_refresh_expires       (expires_at),
+                                KEY idx_refresh_user_revoked  (user_id, revoked),
+
+                                CONSTRAINT fk_refresh_user
+                                    FOREIGN KEY (user_id) REFERENCES users(id)
+                                        ON DELETE CASCADE
+                                        ON UPDATE CASCADE,
+
+    -- liên kết chuỗi rotate: old.replaced_by -> new.id
+                                CONSTRAINT fk_refresh_replaced_by
+                                    FOREIGN KEY (replaced_by) REFERENCES refresh_tokens(id)
+                                        ON DELETE SET NULL
+                                        ON UPDATE CASCADE
+)
+    ENGINE=InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
