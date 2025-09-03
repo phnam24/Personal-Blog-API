@@ -6,8 +6,6 @@
 API backend cho blog cá nhân xây dựng bằng **Java Spring Boot**.  
 Quản lý **bài viết, thẻ (tags), người dùng, bình luận**; hỗ trợ **xác thực JWT** (login / refresh / logout / logout-all).
 
-> README này tối ưu cho **dự án nhỏ**: tập trung vào **setup nhanh, cách chạy, cách dùng API, auth**, và một vài ghi chú triển khai. Những phần nặng như kiến trúc chi tiết, contributing guideline đầy đủ… được **lược giản**.
-
 ---
 
 ## Mục lục
@@ -75,8 +73,6 @@ app.jwt.secret=change_me_to_a_long_random_secret
 app.jwt.access-token-exp=900          # 15 phút
 app.jwt.refresh-token-exp=1209600     # 14 ngày
 ```
-
-> **Mẹo:** Với dự án nhỏ, dùng `ddl-auto=update` cho nhanh; khi lên Prod hãy dùng migration (Flyway/Liquibase).
 
 ---
 
